@@ -1,5 +1,5 @@
-import { Product } from "@/entities/products/model/types";
-import { ProductCard } from "@/entities/products/ui/ProductCard/ProductCard";
+import { Product } from "@/entities/product/model/types";
+import { ProductCard } from "@/entities/product/ui/ProductCard/ProductCard";
 import styles from "./ProductList.module.css";
 
 type Props = {
