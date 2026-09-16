@@ -1,11 +1,5 @@
-type Product = {
-  id: number;
-  title: string;
-  description: string;
-  price: number;
-  stock: number;
-  weight: number;
-};
+import { Product } from "@/entities/products/model/types";
+import { ProductList } from "@/widgets/ProductList/ui/ProductList";
 
 type ProductsResponse = {
   limit: number;
@@ -21,17 +15,7 @@ export default async function ProductsPage() {
 
   return (
     <main>
-      <ul>
-        {data.products.map((product) => {
-          return (
-            <li key={product.id}>
-              <h3>Title: {product.title}</h3>
-              <p>Description: {product.description}</p>
-              <span>Price: {product.price}</span>
-            </li>
-          );
-        })}
-      </ul>
+      <ProductList products={data.products} />
     </main>
   );
 }
