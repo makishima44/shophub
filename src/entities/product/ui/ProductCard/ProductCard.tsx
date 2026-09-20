@@ -1,4 +1,4 @@
-
+import Link from "next/link";
 import { Product } from "../../model/types";
 import styles from "./ProductCard.module.css";
 
@@ -21,7 +21,9 @@ export const ProductCard = ({ product }: Props) => {
         <div className={styles.footer}>
           <span className={styles.price}>${product.price}</span>
 
-          <button className={styles.button}>View</button>
+          <Link href={`/products/${product.id}`} className={styles.button}>
+            View
+          </Link>
         </div>
       </div>
     </article>

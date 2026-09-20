@@ -1,14 +1,24 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { Product } from "../model/types";
+import { Product, ProductDetails, ProductsResponse } from "../model/types";
 
 export const productsApi = createApi({
   reducerPath: "productsApi",
+
   baseQuery: fetchBaseQuery({ baseUrl: "https://dummyjson.com/" }),
+
   endpoints: (builder) => ({
     getProducts: builder.query<Product[], void>({
       query: () => "products",
+
+      transformResponse: (response: ProductsResponse) => {
+        return response.products;
+      },
+    }),
+
+    getProductById: builder.query<ProductDetails, string>({
+      query: (id) => `products/${id}`,
     }),
   }),
 });
 
-export const { useGetProductsQuery } = productsApi;
+export const { useGetProductsQuery, useGetProductByIdQuery } = productsApi;

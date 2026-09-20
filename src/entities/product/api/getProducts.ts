@@ -1,11 +1,4 @@
-import { Product } from "../model/types";
-
-type ProductsResponse = {
-  limit: number;
-  products: Product[];
-  skip: number;
-  total: number;
-};
+import { Product, ProductsResponse } from "../model/types";
 
 export async function getProducts(): Promise<Product[]> {
   const response = await fetch("https://dummyjson.com/products");

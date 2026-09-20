@@ -6,7 +6,7 @@ export default async function ProductsPage() {
 
   return (
     <main>
-      <ProductList products={products} />
+      <ProductList />
     </main>
   );
 }
