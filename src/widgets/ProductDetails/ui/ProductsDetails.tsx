@@ -1,6 +1,7 @@
 "use client";
 
 import { useGetProductByIdQuery } from "@/entities/product/api/productsApi";
+
 import styles from "./ProductsDetails.module.css";
 
 type Props = {
@@ -8,14 +9,17 @@ type Props = {
 };
 
 export const ProductDetails = ({ id }: Props) => {
-  const { data: product, isLoading, error } = useGetProductByIdQuery(id);
+  const { data: product, isLoading, isFetching, error } = useGetProductByIdQuery(id);
+  console.log(error);
 
   if (isLoading) {
     return <div className={styles.state}>Loading...</div>;
   }
 
-  if (error) {
-    return <div className={styles.state}>Failed to load product</div>;
+  if (error && "status" in error) {
+    const data = error.data as { message: string };
+
+    return <div className={styles.state}>Failed to load product: {data.message}</div>;
   }
 
   if (!product) {
