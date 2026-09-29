@@ -1,11 +1,10 @@
-import { getProducts } from "@/entities/product/api/getProducts";
-import { ProductList } from "@/widgets/ProductList/ui/ProductList";
+import { ProductSearch } from "@/features/product-search";
+import { ProductList } from "@/widgets/ProductList";
 
 export default async function ProductsPage() {
-  const products = await getProducts();
-
   return (
     <main>
+      <ProductSearch />
       <ProductList />
     </main>
   );

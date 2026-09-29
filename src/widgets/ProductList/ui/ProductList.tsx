@@ -1,7 +1,7 @@
 "use client";
-import { ProductCard } from "@/entities/product/ui/ProductCard/ProductCard";
+
+import { ProductCard, useGetProductsQuery } from "@/entities/product";
 import styles from "./ProductList.module.css";
-import { useGetProductsQuery } from "@/entities/product/api/productsApi";
 
 export const ProductList = () => {
   const { data: products, isLoading, error } = useGetProductsQuery();

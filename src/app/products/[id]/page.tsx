@@ -1,4 +1,4 @@
-import { ProductDetails } from "@/widgets/ProductDetails/ui/ProductsDetails";
+import { ProductDetails } from "@/widgets/ProductDetails";
 
 type Props = {
   params: Promise<{

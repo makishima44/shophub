@@ -1,4 +1,4 @@
-import { productsApi } from "@/entities/product/api/productsApi";
+import { productsApi } from "@/entities/product";
 import { configureStore } from "@reduxjs/toolkit";
 
 export const store = configureStore({
