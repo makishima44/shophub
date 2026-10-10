@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { useDebounce } from "@/shared/hooks";
 import { useRouter, useSearchParams } from "next/navigation";
 import styles from "./page.module.css";
+import { ProductCatalog } from "@/widgets/ProductCatalog";
 
 export default function ProductsPage() {
   const searchParams = useSearchParams();
@@ -40,7 +41,7 @@ export default function ProductsPage() {
   return (
     <main className={styles.page}>
       <ProductSearch value={search} onChange={setSearch} />
-      <ProductList search={debouncedSearch} />
+      <ProductCatalog search={debouncedSearch} />
     </main>
   );
 }

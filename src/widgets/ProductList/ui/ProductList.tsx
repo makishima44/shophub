@@ -2,16 +2,17 @@
 
 import { useEffect, useState } from "react";
 
-import { ProductCard, useGetProductsBySearchQuery, useGetProductsQuery } from "@/entities/product";
+import { ProductCard, useGetProductsByCategoryQuery, useGetProductsBySearchQuery, useGetProductsQuery } from "@/entities/product";
 
 import { Pagination } from "./Pagination";
 import styles from "./ProductList.module.css";
 
 type ProductListProps = {
   search: string;
+  category: string;
 };
 
-export const ProductList = ({ search }: ProductListProps) => {
+export const ProductList = ({ search, category }: ProductListProps) => {
   const [page, setPage] = useState(1);
 
   const limit = 10;
@@ -22,7 +23,7 @@ export const ProductList = ({ search }: ProductListProps) => {
     isLoading: isProductsLoading,
     isFetching: isProductsFetching,
     error: productsError,
-  } = useGetProductsQuery({ limit, skip }, { skip: search !== "" });
+  } = useGetProductsQuery({ limit, skip }, { skip: search !== "" || category !== "" });
 
   const {
     data: searchData,
@@ -31,16 +32,23 @@ export const ProductList = ({ search }: ProductListProps) => {
     error: searchError,
   } = useGetProductsBySearchQuery({ search, limit, skip }, { skip: search === "" });
 
+  const {
+    data: categoryData,
+    isLoading: isCategoryLoading,
+    isFetching: isCategoryFetching,
+    error: categoryError,
+  } = useGetProductsByCategoryQuery({ category, limit, skip }, { skip: category === "" || search !== "" });
+
   useEffect(() => {
     setPage(1);
-  }, [search]);
+  }, [search, category]);
 
-  const productsToRender = search ? searchData?.products : productsData?.products;
-  const total = search ? (searchData?.total ?? 0) : (productsData?.total ?? 0);
+  const productsToRender = search ? searchData?.products : category ? categoryData?.products : productsData?.products;
+  const total = search ? (searchData?.total ?? 0) : category ? (categoryData?.total ?? 0) : (productsData?.total ?? 0);
   const totalPages = Math.ceil(total / limit);
 
-  const isLoading = search ? isSearchLoading || isSearchFetching : isProductsLoading || isProductsFetching;
-  const error = search ? searchError : productsError;
+  const isLoading = search ? isSearchLoading || isSearchFetching : category ? isCategoryLoading || isCategoryFetching : isProductsLoading || isProductsFetching;
+  const error = search ? searchError : category ? categoryError : productsError;
 
   if (isLoading) {
     return <div className={styles.state}>Loading products...</div>;

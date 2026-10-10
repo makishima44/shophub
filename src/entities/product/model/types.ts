@@ -46,3 +46,9 @@ export type ProductDetails = Product & {
 
   reviews: ProductReview[];
 };
+
+export type ProductCategory = {
+  slug: string;
+  name: string;
+  url: string;
+};
