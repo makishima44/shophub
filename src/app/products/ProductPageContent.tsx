@@ -10,9 +10,10 @@ export function ProductsPageContent() {
   const router = useRouter();
 
   const query = searchParams.get("q");
+  const categoryFromUrl = searchParams.get("category") ?? "";
 
   const [search, setSearch] = useState(query ?? "");
-  const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState(categoryFromUrl);
 
   const debouncedSearch = useDebounce(search.trim(), 400);
   const activeSearch = search.trim() ? debouncedSearch : "";
@@ -34,12 +35,6 @@ export function ProductsPageContent() {
   };
 
   useEffect(() => {
-    const currentQuery = searchParams.get("q") ?? "";
-
-    if (currentQuery === debouncedSearch) {
-      return;
-    }
-
     const params = new URLSearchParams(searchParams.toString());
 
     if (debouncedSearch) {
@@ -48,9 +43,20 @@ export function ProductsPageContent() {
       params.delete("q");
     }
 
+    if (selectedCategory) {
+      params.set("category", selectedCategory);
+    } else {
+      params.delete("category");
+    }
+
     const queryString = params.toString();
-    router.replace(queryString ? `/products?${queryString}` : "/products");
-  }, [debouncedSearch, searchParams, router]);
+    const nextUrl = queryString ? `/products?${queryString}` : "/products";
+    const currentUrl = `/products${searchParams.toString() ? `?${searchParams.toString()}` : ""}`;
+
+    if (nextUrl !== currentUrl) {
+      router.replace(nextUrl);
+    }
+  }, [debouncedSearch, searchParams, selectedCategory, router]);
 
   return (
     <main className={styles.page}>
