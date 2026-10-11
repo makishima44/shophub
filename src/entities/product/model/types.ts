@@ -52,3 +52,11 @@ export type ProductCategory = {
   name: string;
   url: string;
 };
+
+type SortOrder = "asc" | "desc";
+type ProductSortBy = "title" | "price" | "rating";
+
+export type SortParams = {
+  sortBy?: ProductSortBy;
+  order?: SortOrder;
+};

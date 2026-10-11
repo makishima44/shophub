@@ -1,22 +1,21 @@
 "use client";
 
 import { useState } from "react";
-
 import { ProductCard, useGetProductsByCategoryQuery, useGetProductsBySearchQuery, useGetProductsQuery } from "@/entities/product";
-
 import { Pagination } from "./Pagination";
+import { SortParams } from "@/entities/product/model/types";
 import styles from "./ProductList.module.css";
 
 type ProductListProps = {
   search: string;
   category: string;
-};
+} & SortParams;
 
-export const ProductList = ({ search, category }: ProductListProps) => (
-  <ProductListContent key={`${search}:${category}`} search={search} category={category} />
+export const ProductList = ({ search, category, sortBy, order }: ProductListProps) => (
+  <ProductListContent key={`${search}:${category}:${sortBy ?? ""}:${order ?? ""}`} search={search} category={category} sortBy={sortBy} order={order} />
 );
 
-const ProductListContent = ({ search, category }: ProductListProps) => {
+const ProductListContent = ({ search, category, sortBy, order }: ProductListProps) => {
   const [page, setPage] = useState(1);
 
   const limit = 10;
@@ -27,21 +26,21 @@ const ProductListContent = ({ search, category }: ProductListProps) => {
     isLoading: isProductsLoading,
     isFetching: isProductsFetching,
     error: productsError,
-  } = useGetProductsQuery({ limit, skip }, { skip: search !== "" || category !== "" });
+  } = useGetProductsQuery({ limit, skip, sortBy, order }, { skip: search !== "" || category !== "" });
 
   const {
     data: searchData,
     isLoading: isSearchLoading,
     isFetching: isSearchFetching,
     error: searchError,
-  } = useGetProductsBySearchQuery({ search, limit, skip }, { skip: search === "" });
+  } = useGetProductsBySearchQuery({ search, limit, skip, sortBy, order }, { skip: search === "" });
 
   const {
     data: categoryData,
     isLoading: isCategoryLoading,
     isFetching: isCategoryFetching,
     error: categoryError,
-  } = useGetProductsByCategoryQuery({ category, limit, skip }, { skip: category === "" || search !== "" });
+  } = useGetProductsByCategoryQuery({ category, limit, skip, sortBy, order }, { skip: category === "" || search !== "" });
 
   const productsToRender = search ? searchData?.products : category ? categoryData?.products : productsData?.products;
   const total = search ? (searchData?.total ?? 0) : category ? (categoryData?.total ?? 0) : (productsData?.total ?? 0);

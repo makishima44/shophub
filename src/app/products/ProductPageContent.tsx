@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { ProductSearch } from "@/features/product-search";
 import { ProductCatalog } from "@/widgets/ProductCatalog";
 import styles from "./page.module.css";
+import { SortParams } from "@/entities/product/model/types";
+import { ProductToolbar } from "@/widgets/ProductToolbar";
 
 export function ProductsPageContent() {
   const searchParams = useSearchParams();
@@ -14,6 +16,10 @@ export function ProductsPageContent() {
 
   const [search, setSearch] = useState(query ?? "");
   const [selectedCategory, setSelectedCategory] = useState(categoryFromUrl);
+  const [sort, setSort] = useState<SortParams>(() => ({
+    sortBy: (searchParams.get("sortBy") as SortParams["sortBy"]) ?? undefined,
+    order: (searchParams.get("order") as SortParams["order"]) ?? undefined,
+  }));
 
   const debouncedSearch = useDebounce(search.trim(), 400);
   const activeSearch = search.trim() ? debouncedSearch : "";
@@ -34,6 +40,16 @@ export function ProductsPageContent() {
     }
   };
 
+  const handleSortChange = (newSort: SortParams) => {
+    setSort(newSort);
+  };
+
+  const handleResetFilters = () => {
+    setSearch("");
+    setSelectedCategory("");
+    setSort({});
+  };
+
   useEffect(() => {
     const params = new URLSearchParams(searchParams.toString());
 
@@ -49,6 +65,14 @@ export function ProductsPageContent() {
       params.delete("category");
     }
 
+    if (sort.sortBy && sort.order) {
+      params.set("sortBy", sort.sortBy);
+      params.set("order", sort.order);
+    } else {
+      params.delete("sortBy");
+      params.delete("order");
+    }
+
     const queryString = params.toString();
     const nextUrl = queryString ? `/products?${queryString}` : "/products";
     const currentUrl = `/products${searchParams.toString() ? `?${searchParams.toString()}` : ""}`;
@@ -56,12 +80,25 @@ export function ProductsPageContent() {
     if (nextUrl !== currentUrl) {
       router.replace(nextUrl);
     }
-  }, [debouncedSearch, searchParams, selectedCategory, router]);
+  }, [debouncedSearch, searchParams, selectedCategory, sort, router]);
 
   return (
     <main className={styles.page}>
-      <ProductSearch value={search} onChange={handleSearchChange} />
-      <ProductCatalog search={activeSearch} selectedCategory={selectedCategory} onCategoryChange={handleCategoryChange} />
+      <ProductToolbar
+        search={search}
+        onSearchChange={handleSearchChange}
+        sortBy={sort.sortBy}
+        order={sort.order}
+        onSortChange={handleSortChange}
+        onReset={handleResetFilters}
+      />
+      <ProductCatalog
+        search={activeSearch}
+        selectedCategory={selectedCategory}
+        onCategoryChange={handleCategoryChange}
+        sortBy={sort.sortBy}
+        order={sort.order}
+      />
     </main>
   );
 }

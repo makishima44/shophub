@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { Product, ProductCategory, ProductDetails, ProductsResponse } from "../model/types";
+import { Product, ProductCategory, ProductDetails, ProductsResponse, SortParams } from "../model/types";
 
 export const productsApi = createApi({
   reducerPath: "productsApi",
@@ -7,8 +7,20 @@ export const productsApi = createApi({
   baseQuery: fetchBaseQuery({ baseUrl: "https://dummyjson.com/" }),
 
   endpoints: (builder) => ({
-    getProducts: builder.query<{ products: Product[]; total: number }, { limit: number; skip: number }>({
-      query: ({ limit, skip }) => `products?limit=${limit}&skip=${skip}`,
+    getProducts: builder.query<{ products: Product[]; total: number }, { limit: number; skip: number } & SortParams>({
+      query: ({ limit, skip, sortBy, order }) => {
+        const params = new URLSearchParams({
+          limit: String(limit),
+          skip: String(skip),
+        });
+
+        if (sortBy && order) {
+          params.set("sortBy", sortBy);
+          params.set("order", order);
+        }
+
+        return `products?${params.toString()}`;
+      },
 
       transformResponse: (response: ProductsResponse) => ({
         products: response.products,
@@ -20,8 +32,21 @@ export const productsApi = createApi({
       query: (id) => `products/${id}`,
     }),
 
-    getProductsBySearch: builder.query<{ products: Product[]; total: number }, { search: string; limit: number; skip: number }>({
-      query: ({ search, limit, skip }) => `products/search?q=${encodeURIComponent(search)}&limit=${limit}&skip=${skip}`,
+    getProductsBySearch: builder.query<{ products: Product[]; total: number }, { search: string; limit: number; skip: number } & SortParams>({
+      query: ({ search, limit, skip, sortBy, order }) => {
+        const params = new URLSearchParams({
+          q: search,
+          limit: String(limit),
+          skip: String(skip),
+        });
+
+        if (sortBy && order) {
+          params.set("sortBy", sortBy);
+          params.set("order", order);
+        }
+
+        return `products/search?${params.toString()}`;
+      },
 
       transformResponse: (response: ProductsResponse) => ({
         products: response.products,
@@ -33,8 +58,20 @@ export const productsApi = createApi({
       query: () => "products/categories",
     }),
 
-    getProductsByCategory: builder.query<{ products: Product[]; total: number }, { category: string; limit: number; skip: number }>({
-      query: ({ category, limit, skip }) => `products/category/${encodeURIComponent(category)}?limit=${limit}&skip=${skip}`,
+    getProductsByCategory: builder.query<{ products: Product[]; total: number }, { category: string; limit: number; skip: number } & SortParams>({
+      query: ({ category, limit, skip, sortBy, order }) => {
+        const params = new URLSearchParams({
+          limit: String(limit),
+          skip: String(skip),
+        });
+
+        if (sortBy && order) {
+          params.set("sortBy", sortBy);
+          params.set("order", order);
+        }
+
+        return `products/category/${encodeURIComponent(category)}?${params.toString()}`;
+      },
 
       transformResponse: (response: ProductsResponse) => ({
         products: response.products,
