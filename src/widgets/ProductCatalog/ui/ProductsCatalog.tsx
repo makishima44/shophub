@@ -1,7 +1,6 @@
 import { ProductList } from "@/widgets/ProductList/ui/ProductList";
-
-import styles from "./ProductCatalog.module.css";
 import { ProductFilters } from "@/features/product-filters";
+import styles from "./ProductCatalog.module.css";
 
 type ProductCatalogProps = {
   search: string;
