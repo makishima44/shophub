@@ -12,8 +12,15 @@ export const ProductFilters = ({ selectedCategory, onCategoryChange }: ProductFi
 
   if (isLoading) {
     return (
-      <aside className={styles.sidebar}>
-        <p className={styles.state}>Loading categories...</p>
+      <aside className={styles.sidebar} aria-label='Loading categories' aria-busy='true'>
+        <div className={`${styles.skeleton} ${styles.skeletonTitle}`} aria-hidden='true' />
+        <ul className={styles.categoryList} aria-hidden='true'>
+          {Array.from({ length: 10 }, (_, index) => (
+            <li key={index}>
+              <div className={`${styles.skeleton} ${styles.skeletonCategory}`} />
+            </li>
+          ))}
+        </ul>
       </aside>
     );
   }

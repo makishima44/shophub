@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import { ProductCard, useGetProductsByCategoryQuery, useGetProductsBySearchQuery, useGetProductsQuery } from "@/entities/product";
 
@@ -12,7 +12,11 @@ type ProductListProps = {
   category: string;
 };
 
-export const ProductList = ({ search, category }: ProductListProps) => {
+export const ProductList = ({ search, category }: ProductListProps) => (
+  <ProductListContent key={`${search}:${category}`} search={search} category={category} />
+);
+
+const ProductListContent = ({ search, category }: ProductListProps) => {
   const [page, setPage] = useState(1);
 
   const limit = 10;
@@ -39,19 +43,41 @@ export const ProductList = ({ search, category }: ProductListProps) => {
     error: categoryError,
   } = useGetProductsByCategoryQuery({ category, limit, skip }, { skip: category === "" || search !== "" });
 
-  useEffect(() => {
-    setPage(1);
-  }, [search, category]);
-
   const productsToRender = search ? searchData?.products : category ? categoryData?.products : productsData?.products;
   const total = search ? (searchData?.total ?? 0) : category ? (categoryData?.total ?? 0) : (productsData?.total ?? 0);
   const totalPages = Math.ceil(total / limit);
 
-  const isLoading = search ? isSearchLoading || isSearchFetching : category ? isCategoryLoading || isCategoryFetching : isProductsLoading || isProductsFetching;
+  const isLoading = search ? isSearchLoading : category ? isCategoryLoading : isProductsLoading;
+  const isFetching = search ? isSearchFetching : category ? isCategoryFetching : isProductsFetching;
   const error = search ? searchError : category ? categoryError : productsError;
+  const isInitialLoading = isLoading && !productsToRender;
 
-  if (isLoading) {
-    return <div className={styles.state}>Loading products...</div>;
+  const handlePageChange = (nextPage: number) => {
+    if (isFetching || nextPage === page) {
+      return;
+    }
+
+    setPage(nextPage);
+
+    const behavior = window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth";
+    window.scrollTo({ top: 0, behavior });
+  };
+
+  if (isInitialLoading) {
+    return (
+      <div className={styles.productsGrid} aria-label='Loading products' aria-busy='true'>
+        {Array.from({ length: limit }, (_, index) => (
+          <div className={styles.skeletonCard} key={index} aria-hidden='true'>
+            <div className={styles.skeletonImage} />
+            <div className={styles.skeletonContent}>
+              <div className={styles.skeletonLine} />
+              <div className={`${styles.skeletonLine} ${styles.skeletonLineShort}`} />
+              <div className={styles.skeletonFooter} />
+            </div>
+          </div>
+        ))}
+      </div>
+    );
   }
 
   if (error) {
@@ -64,13 +90,15 @@ export const ProductList = ({ search, category }: ProductListProps) => {
 
   return (
     <div>
-      <div className={styles.productsGrid}>
+      <div className={`${styles.productsGrid} ${isFetching ? styles.isFetching : ""}`} aria-busy={isFetching}>
         {productsToRender.map((product) => (
           <ProductCard key={product.id} product={product} />
         ))}
+
+        {isFetching && <div className={styles.loadingIndicator}>Loading products...</div>}
       </div>
 
-      {totalPages > 1 && <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />}
+      {totalPages > 1 && <Pagination page={page} totalPages={totalPages} isLoading={isFetching} onPageChange={handlePageChange} />}
     </div>
   );
 };
