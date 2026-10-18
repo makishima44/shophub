@@ -1,104 +1,119 @@
-import { useDebounce } from "@/shared/hooks";
-import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
-import { ProductSearch } from "@/features/product-search";
-import { ProductCatalog } from "@/widgets/ProductCatalog";
-import styles from "./page.module.css";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { SortParams } from "@/entities/product/model/types";
+import { parseSortParams } from "@/features/product-sort";
+import { ProductCatalog } from "@/widgets/ProductCatalog";
 import { ProductToolbar } from "@/widgets/ProductToolbar";
+import styles from "./page.module.css";
 
 export function ProductsPageContent() {
   const searchParams = useSearchParams();
-  const router = useRouter();
+  const query = searchParams.get("q") ?? "";
+  const selectedCategory = searchParams.get("category") ?? "";
+  const sortByParam = searchParams.get("sortBy");
+  const orderParam = searchParams.get("order");
+  const sort = parseSortParams(sortByParam, orderParam);
+  const hasInvalidSort = (sortByParam !== null || orderParam !== null) && sort.sortBy === undefined;
 
-  const query = searchParams.get("q");
-  const categoryFromUrl = searchParams.get("category") ?? "";
+  const [searchDraft, setSearchDraft] = useState(query);
+  const searchTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const searchSession = useRef(false);
 
-  const [search, setSearch] = useState(query ?? "");
-  const [selectedCategory, setSelectedCategory] = useState(categoryFromUrl);
-  const [sort, setSort] = useState<SortParams>(() => ({
-    sortBy: (searchParams.get("sortBy") as SortParams["sortBy"]) ?? undefined,
-    order: (searchParams.get("order") as SortParams["order"]) ?? undefined,
-  }));
+  const cancelPendingSearch = useCallback(() => {
+    if (searchTimer.current !== null) {
+      clearTimeout(searchTimer.current);
+      searchTimer.current = null;
+    }
+  }, []);
 
-  const debouncedSearch = useDebounce(search.trim(), 400);
-  const activeSearch = search.trim() ? debouncedSearch : "";
+  const updateUrl = useCallback((changes: Record<string, string | null>, historyMode: "push" | "replace" = "push") => {
+    const params = new URLSearchParams(window.location.search);
+
+    Object.entries(changes).forEach(([key, value]) => {
+      if (value) params.set(key, value);
+      else params.delete(key);
+    });
+
+    const queryString = params.toString();
+    const nextUrl = window.location.pathname + (queryString ? `?${queryString}` : "") + window.location.hash;
+    const currentUrl = window.location.pathname + window.location.search + window.location.hash;
+
+    if (nextUrl === currentUrl) return false;
+
+    if (historyMode === "push") window.history.pushState(null, "", nextUrl);
+    else window.history.replaceState(null, "", nextUrl);
+
+    return true;
+  }, []);
+
+  useEffect(() => {
+    const restoreSearchFromUrl = () => {
+      cancelPendingSearch();
+      searchSession.current = false;
+      setSearchDraft(new URLSearchParams(window.location.search).get("q") ?? "");
+    };
+
+    window.addEventListener("popstate", restoreSearchFromUrl);
+
+    return () => {
+      window.removeEventListener("popstate", restoreSearchFromUrl);
+      cancelPendingSearch();
+    };
+  }, [cancelPendingSearch]);
 
   const handleSearchChange = (value: string) => {
-    setSearch(value);
+    setSearchDraft(value);
+    cancelPendingSearch();
 
-    if (value.trim()) {
-      setSelectedCategory("");
-    }
+    searchTimer.current = setTimeout(() => {
+      searchTimer.current = null;
+      const nextQuery = value.trim();
+      const currentQuery = new URLSearchParams(window.location.search).get("q") ?? "";
+
+      if (currentQuery !== query) return;
+
+      const historyMode = searchSession.current ? "replace" : "push";
+      const didUpdateUrl = updateUrl(nextQuery ? { q: nextQuery, category: null } : { q: null }, historyMode);
+
+      if (didUpdateUrl) searchSession.current = true;
+    }, 400);
+  };
+
+  const handleSearchBlur = () => {
+    searchSession.current = false;
   };
 
   const handleCategoryChange = (category: string) => {
-    setSelectedCategory(category);
-
-    if (category) {
-      setSearch("");
-    }
+    cancelPendingSearch();
+    searchSession.current = false;
+    setSearchDraft("");
+    updateUrl({ category: category || null, q: null });
   };
 
   const handleSortChange = (newSort: SortParams) => {
-    setSort(newSort);
+    updateUrl({ sortBy: newSort.sortBy ?? null, order: newSort.order ?? null });
   };
 
   const handleResetFilters = () => {
-    setSearch("");
-    setSelectedCategory("");
-    setSort({});
+    cancelPendingSearch();
+    searchSession.current = false;
+    setSearchDraft("");
+    updateUrl({ q: null, category: null, sortBy: null, order: null });
   };
-
-  useEffect(() => {
-    const params = new URLSearchParams(searchParams.toString());
-
-    if (debouncedSearch) {
-      params.set("q", debouncedSearch);
-    } else {
-      params.delete("q");
-    }
-
-    if (selectedCategory) {
-      params.set("category", selectedCategory);
-    } else {
-      params.delete("category");
-    }
-
-    if (sort.sortBy && sort.order) {
-      params.set("sortBy", sort.sortBy);
-      params.set("order", sort.order);
-    } else {
-      params.delete("sortBy");
-      params.delete("order");
-    }
-
-    const queryString = params.toString();
-    const nextUrl = queryString ? `/products?${queryString}` : "/products";
-    const currentUrl = `/products${searchParams.toString() ? `?${searchParams.toString()}` : ""}`;
-
-    if (nextUrl !== currentUrl) {
-      router.replace(nextUrl);
-    }
-  }, [debouncedSearch, searchParams, selectedCategory, sort, router]);
 
   return (
     <main className={styles.page}>
       <ProductToolbar
-        search={search}
+        search={searchDraft}
         onSearchChange={handleSearchChange}
+        onSearchBlur={handleSearchBlur}
         sortBy={sort.sortBy}
         order={sort.order}
+        hasInvalidSort={hasInvalidSort}
         onSortChange={handleSortChange}
         onReset={handleResetFilters}
       />
-      <ProductCatalog
-        search={activeSearch}
-        selectedCategory={selectedCategory}
-        onCategoryChange={handleCategoryChange}
-        sortBy={sort.sortBy}
-        order={sort.order}
-      />
+      <ProductCatalog search={query} selectedCategory={selectedCategory} onCategoryChange={handleCategoryChange} sortBy={sort.sortBy} order={sort.order} />
     </main>
   );
 }
