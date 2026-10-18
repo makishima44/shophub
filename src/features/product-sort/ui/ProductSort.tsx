@@ -1,6 +1,7 @@
 "use client";
 
 import { SortParams } from "@/entities/product/model/types";
+import { productSortOptions } from "../model/sortOptions";
 import styles from "./ProductSort.module.css";
 
 type ProductSortProps = SortParams & {
@@ -18,9 +19,10 @@ export const ProductSort = ({ sortBy, order, onSortChange }: ProductSortProps) =
       return;
     }
 
-    const [sortBy, order] = selectedValue.split("-") as [NonNullable<SortParams["sortBy"]>, NonNullable<SortParams["order"]>];
+    const selectedOption = productSortOptions.find((option) => option.value === selectedValue);
+    if (!selectedOption) return;
 
-    onSortChange({ sortBy, order });
+    onSortChange({ sortBy: selectedOption.sortBy, order: selectedOption.order });
   };
 
   return (
@@ -31,9 +33,11 @@ export const ProductSort = ({ sortBy, order, onSortChange }: ProductSortProps) =
 
       <select className={styles.select} id='product-sort' value={value} onChange={handleChange}>
         <option value='default'>По умолчанию</option>
-        <option value='title-asc'>По названию: А–Я</option>
-        <option value='price-asc'>Сначала дешевле</option>
-        <option value='price-desc'>Сначала дороже</option>
+        {productSortOptions.map((option) => (
+          <option key={option.value} value={option.value}>
+            {option.label}
+          </option>
+        ))}
       </select>
     </div>
   );
