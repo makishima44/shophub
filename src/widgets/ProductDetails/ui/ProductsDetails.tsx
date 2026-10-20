@@ -1,6 +1,7 @@
 "use client";
 
 import { useGetProductByIdQuery } from "@/entities/product";
+import { AddToCartButton } from "@/features/cart/add-to-cart";
 import styles from "./ProductsDetails.module.css";
 
 type Props = {
@@ -59,7 +60,7 @@ export const ProductDetails = ({ id }: Props) => {
             <span className={styles.stock}>{product.stock} items available</span>
           </div>
 
-          <button className={styles.addButton}>Add to cart</button>
+          <AddToCartButton product={product} />
 
           <div className={styles.delivery}>
             <div>
