@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { clearCart, decrementItem, incrementItem, removeItem, selectCartItems, selectCartTotal } from "@/entities/cart";
+import { clearCart, decrementItem, incrementItem, removeItem, selectCartHydrated, selectCartItems, selectCartTotal } from "@/entities/cart";
 import { useAppDispatch, useAppSelector } from "@/shared/lib/redux/hooks";
 import styles from "./CartPage.module.css";
 
@@ -12,6 +12,11 @@ export const CartPage = () => {
   const dispatch = useAppDispatch();
   const items = useAppSelector(selectCartItems);
   const total = useAppSelector(selectCartTotal);
+  const hydrated = useAppSelector(selectCartHydrated);
+
+  if (!hydrated) {
+    return <main className={styles.container}><p className={styles.empty}>Loading cart...</p></main>;
+  }
 
   if (items.length === 0) {
     return (

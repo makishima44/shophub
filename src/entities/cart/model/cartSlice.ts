@@ -9,9 +9,10 @@ export type CartItem = {
 
 export type CartState = {
   items: CartItem[];
+  hydrated: boolean;
 };
 
-const initialState: CartState = { items: [] };
+const initialState: CartState = { items: [], hydrated: false };
 
 const cartSlice = createSlice({
   name: "cart",
@@ -41,13 +42,27 @@ const cartSlice = createSlice({
     clearCart(state) {
       state.items = [];
     },
+    hydrateCart(state, action: PayloadAction<CartItem[]>) {
+      if (state.hydrated) return;
+
+      const mergedItems = new Map(action.payload.map((item) => [item.product.id, item]));
+      for (const item of state.items) {
+        const savedItem = mergedItems.get(item.product.id);
+        if (savedItem) savedItem.quantity += item.quantity;
+        else mergedItems.set(item.product.id, item);
+      }
+
+      state.items = [...mergedItems.values()];
+      state.hydrated = true;
+    },
   },
 });
 
-export const { addItem, clearCart, decrementItem, incrementItem, removeItem } = cartSlice.actions;
+export const { addItem, clearCart, decrementItem, hydrateCart, incrementItem, removeItem } = cartSlice.actions;
 export const cartReducer = cartSlice.reducer;
 export const selectCartItems = (state: RootState) => state.cart.items;
 export const selectCartItemCount = (state: RootState) =>
   state.cart.items.reduce((total, item) => total + item.quantity, 0);
 export const selectCartTotal = (state: RootState) =>
   state.cart.items.reduce((total, item) => total + item.product.price * item.quantity, 0);
+export const selectCartHydrated = (state: RootState) => state.cart.hydrated;
