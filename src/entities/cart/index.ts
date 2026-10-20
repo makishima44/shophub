@@ -1,1 +1,8 @@
-export { addItem, cartReducer, type CartItem, type CartState } from "./model/cartSlice";
+export {
+  addItem,
+  cartReducer,
+  selectCartItemCount,
+  selectCartItems,
+  type CartItem,
+  type CartState,
+} from "./model/cartSlice";

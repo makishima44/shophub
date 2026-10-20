@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { StoreProvider } from "@/app/providers/StoreProvider";
+import { Header } from "@/widgets/Header";
 
 export const metadata: Metadata = {
   title: "ShopHub",
@@ -11,7 +12,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang='en'>
       <body>
-        <StoreProvider>{children}</StoreProvider>
+        <StoreProvider>
+          <Header />
+          {children}
+        </StoreProvider>
       </body>
     </html>
   );
