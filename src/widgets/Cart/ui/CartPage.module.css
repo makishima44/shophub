@@ -1,0 +1,185 @@
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 24px 80px;
+  color: #fafafa;
+}
+
+.heading,
+.layout,
+.item,
+.controls,
+.quantity,
+.totalRow {
+  display: flex;
+}
+
+.heading,
+.totalRow {
+  align-items: center;
+  justify-content: space-between;
+}
+
+.title {
+  margin: 0;
+  font-size: 30px;
+}
+
+.layout {
+  align-items: flex-start;
+  gap: 32px;
+  margin-top: 28px;
+}
+
+.items {
+  display: grid;
+  flex: 1;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+}
+
+.item {
+  align-items: center;
+  gap: 18px;
+  padding: 16px;
+  border: 1px solid #27272a;
+  border-radius: 12px;
+  background: #18181b;
+}
+
+.image {
+  width: 88px;
+  height: 88px;
+  border-radius: 8px;
+  background: #f4f4f5;
+  object-fit: contain;
+}
+
+.itemInfo {
+  display: grid;
+  flex: 1;
+  gap: 8px;
+}
+
+.productTitle {
+  color: #fafafa;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.price,
+.note {
+  color: #a1a1aa;
+  font-size: 13px;
+}
+
+.controls {
+  align-items: center;
+  gap: 16px;
+}
+
+.quantity {
+  align-items: center;
+  gap: 12px;
+  padding: 4px 8px;
+  border: 1px solid #3f3f46;
+  border-radius: 7px;
+}
+
+.quantity button,
+.textButton {
+  border: 0;
+  background: transparent;
+  color: #d4d4d8;
+  cursor: pointer;
+}
+
+.quantity button {
+  width: 24px;
+  height: 24px;
+  font-size: 18px;
+}
+
+.textButton {
+  padding: 6px 0;
+  font-size: 13px;
+}
+
+.textButton:hover,
+.quantity button:hover {
+  color: #fff;
+}
+
+.lineTotal {
+  white-space: nowrap;
+}
+
+.summary {
+  width: 280px;
+  padding: 20px;
+  border: 1px solid #27272a;
+  border-radius: 12px;
+  background: #18181b;
+}
+
+.summary h2 {
+  margin: 0 0 20px;
+  font-size: 18px;
+}
+
+.totalRow {
+  padding-top: 16px;
+  border-top: 1px solid #3f3f46;
+}
+
+.note {
+  line-height: 1.5;
+}
+
+.continueLink {
+  display: inline-block;
+  margin-top: 12px;
+  color: #fafafa;
+  font-size: 14px;
+  text-decoration: underline;
+}
+
+.empty {
+  margin: 28px 0 4px;
+  color: #a1a1aa;
+}
+
+@media (max-width: 800px) {
+  .layout {
+    flex-direction: column;
+  }
+
+  .items,
+  .summary {
+    width: 100%;
+  }
+}
+
+@media (max-width: 520px) {
+  .container {
+    padding: 28px 16px 60px;
+  }
+
+  .item {
+    align-items: flex-start;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .image {
+    width: 68px;
+    height: 68px;
+  }
+
+  .lineTotal {
+    width: 100%;
+    text-align: right;
+  }
+}
