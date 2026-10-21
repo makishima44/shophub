@@ -259,7 +259,7 @@
   color: #a1a1aa;
 }
 
-@media (max-width: 800px) {
+@media (max-width: 900px) {
   .container {
     padding: 24px 16px 60px;
   }
@@ -307,5 +307,16 @@
 
   .detailsGrid {
     grid-template-columns: 1fr;
+  }
+
+  .meta,
+  .availability {
+    flex-wrap: wrap;
+  }
+
+  .delivery {
+    gap: 12px;
+    margin-top: 24px;
+    padding-top: 20px;
   }
 }

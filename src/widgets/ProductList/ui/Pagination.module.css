@@ -57,3 +57,19 @@
   font-size: 14px;
   font-weight: 600;
 }
+
+@media (max-width: 480px) {
+  .pagination {
+    gap: 8px;
+    padding: 10px 12px 20px;
+  }
+
+  .button {
+    min-width: 72px;
+    padding: 0 10px;
+  }
+
+  .page {
+    min-width: 32px;
+  }
+}

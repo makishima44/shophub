@@ -62,3 +62,18 @@
     gap: 16px;
   }
 }
+
+@media (max-width: 360px) {
+  .header {
+    min-height: 60px;
+    padding: 0 12px;
+  }
+
+  .logo {
+    font-size: 18px;
+  }
+
+  .navigation {
+    gap: 12px;
+  }
+}

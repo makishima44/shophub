@@ -103,3 +103,9 @@
     width: 100%;
   }
 }
+
+@media (min-width: 481px) and (max-width: 900px) {
+  .controls {
+    gap: 10px;
+  }
+}

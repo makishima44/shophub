@@ -10,9 +10,15 @@
   min-width: 0;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1048px) {
   .catalog {
     grid-template-columns: 1fr;
-    gap: 24px;
+    gap: 20px;
+  }
+}
+
+@media (max-width: 600px) {
+  .catalog {
+    gap: 16px;
   }
 }

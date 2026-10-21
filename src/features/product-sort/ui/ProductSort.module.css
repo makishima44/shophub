@@ -54,3 +54,13 @@
     min-width: 0;
   }
 }
+
+@media (min-width: 481px) and (max-width: 600px) {
+  .sort {
+    gap: 8px;
+  }
+
+  .select {
+    min-width: 160px;
+  }
+}

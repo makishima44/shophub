@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
-import "./globals.css";
 import { StoreProvider } from "@/app/providers/StoreProvider";
 import { Header } from "@/widgets/Header";
+
+import "./globals.css";
 
 export const metadata: Metadata = {
   title: "ShopHub",

@@ -102,3 +102,21 @@
   background: #27272a;
   border-color: #52525b;
 }
+
+@media (max-width: 900px) {
+  .card {
+    max-width: 420px;
+    justify-self: center;
+  }
+
+  .imageWrapper {
+    height: clamp(170px, 56vw, 200px);
+  }
+}
+
+@media (max-width: 600px) {
+  .content {
+    height: 184px;
+    padding: 16px;
+  }
+}

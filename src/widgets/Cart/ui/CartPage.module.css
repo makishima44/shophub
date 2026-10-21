@@ -154,6 +154,7 @@
 @media (max-width: 800px) {
   .layout {
     flex-direction: column;
+    gap: 20px;
   }
 
   .items,
@@ -181,5 +182,13 @@
   .lineTotal {
     width: 100%;
     text-align: right;
+  }
+
+  .title {
+    font-size: 26px;
+  }
+
+  .summary {
+    padding: 16px;
   }
 }
