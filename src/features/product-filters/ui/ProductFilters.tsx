@@ -1,6 +1,7 @@
 "use client";
 
 import { useGetProductCategoriesQuery } from "@/entities/product/api/productsApi";
+import { Select, type SelectOption } from "@/shared/ui/Select";
 import styles from "./ProductFilters.module.css";
 
 type ProductFiltersProps = {
@@ -10,6 +11,14 @@ type ProductFiltersProps = {
 
 export const ProductFilters = ({ selectedCategory, onCategoryChange }: ProductFiltersProps) => {
   const { data: categories, isLoading, isError } = useGetProductCategoriesQuery();
+  const hasSelectedCategory = categories?.some((category) => category.slug === selectedCategory) ?? false;
+  const categoryOptions: SelectOption[] = [
+    { value: "", label: "All products" },
+    ...(selectedCategory && !hasSelectedCategory
+      ? [{ value: selectedCategory, label: isLoading ? "Loading selected category…" : selectedCategory }]
+      : []),
+    ...(categories ?? []).map((category) => ({ value: category.slug, label: category.name })),
+  ];
 
   return (
     <div className={styles.filterContainer}>
@@ -53,23 +62,14 @@ export const ProductFilters = ({ selectedCategory, onCategoryChange }: ProductFi
 
       <div className={styles.mobileFilter}>
         <label className={styles.mobileLabel} htmlFor='product-category'>Category</label>
-        <select
+        <Select
           id='product-category'
           className={styles.categorySelect}
           value={selectedCategory}
+          options={categoryOptions}
           disabled={isLoading || isError}
-          onChange={(event) => onCategoryChange(event.target.value)}
-        >
-          <option value=''>All products</option>
-          {selectedCategory && !categories?.some((category) => category.slug === selectedCategory) && (
-            <option value={selectedCategory}>{isLoading ? "Loading selected category…" : selectedCategory}</option>
-          )}
-          {categories?.map((category) => (
-            <option key={category.slug} value={category.slug}>
-              {category.name}
-            </option>
-          ))}
-        </select>
+          onValueChange={onCategoryChange}
+        />
         {isLoading && <span className={styles.mobileStatus}>Loading categories…</span>}
         {isError && <span className={styles.mobileStatus}>Failed to load categories</span>}
       </div>

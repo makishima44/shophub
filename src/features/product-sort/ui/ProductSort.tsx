@@ -1,6 +1,7 @@
 "use client";
 
 import { SortParams } from "@/entities/product/model/types";
+import { Select, type SelectOption } from "@/shared/ui/Select";
 import { productSortOptions } from "../model/sortOptions";
 import styles from "./ProductSort.module.css";
 
@@ -11,9 +12,7 @@ type ProductSortProps = SortParams & {
 export const ProductSort = ({ sortBy, order, onSortChange }: ProductSortProps) => {
   const value = sortBy && order ? `${sortBy}-${order}` : "default";
 
-  const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedValue = event.target.value;
-
+  const handleChange = (selectedValue: string) => {
     if (selectedValue === "default") {
       onSortChange({});
       return;
@@ -25,20 +24,18 @@ export const ProductSort = ({ sortBy, order, onSortChange }: ProductSortProps) =
     onSortChange({ sortBy: selectedOption.sortBy, order: selectedOption.order });
   };
 
+  const options: SelectOption[] = [
+    { value: "default", label: "По умолчанию" },
+    ...productSortOptions.map(({ value, label }) => ({ value, label })),
+  ];
+
   return (
     <div className={styles.sort}>
       <label className={styles.label} htmlFor='product-sort'>
         Сортировка
       </label>
 
-      <select className={styles.select} id='product-sort' value={value} onChange={handleChange}>
-        <option value='default'>По умолчанию</option>
-        {productSortOptions.map((option) => (
-          <option key={option.value} value={option.value}>
-            {option.label}
-          </option>
-        ))}
-      </select>
+      <Select id='product-sort' className={styles.select} value={value} options={options} onValueChange={handleChange} />
     </div>
   );
 };
