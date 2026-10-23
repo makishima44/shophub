@@ -38,7 +38,5 @@ export const loadCartItems = (): CartItem[] => {
 export const saveCartItems = (items: CartItem[]) => {
   try {
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
-  } catch {
-    // Storage can be unavailable when the browser blocks it.
-  }
+  } catch {}
 };
