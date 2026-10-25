@@ -11,6 +11,16 @@ export const ProductCard = ({ product }: Props) => {
     <article className={styles.card}>
       <div className={styles.imageWrapper}>
         <img className={styles.image} src={product.thumbnail} alt={product.title} />
+        {typeof product.rating === "number" && (
+          <span className={styles.rating} aria-label={`Rating: ${product.rating.toFixed(1)} out of 5`}>
+            ★ {product.rating.toFixed(1)}
+          </span>
+        )}
+        {typeof product.discountPercentage === "number" && product.discountPercentage > 1 && (
+          <span className={styles.discount} aria-label={`${Math.round(product.discountPercentage)}% discount`}>
+            -{Math.round(product.discountPercentage)}%
+          </span>
+        )}
       </div>
 
       <div className={styles.content}>

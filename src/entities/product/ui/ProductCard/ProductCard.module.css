@@ -18,6 +18,7 @@
 }
 
 .imageWrapper {
+  position: relative;
   width: 100%;
   height: 200px;
   display: flex;
@@ -25,6 +26,29 @@
   justify-content: center;
   overflow: hidden;
   background: #f4f4f5;
+}
+
+.rating,
+.discount {
+  position: absolute;
+  top: 12px;
+  padding: 6px 9px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.rating {
+  right: 12px;
+  background: rgba(24, 24, 27, 0.92);
+  color: #facc15;
+}
+
+.discount {
+  left: 12px;
+  background: #b91c1c;
+  color: #fff;
 }
 
 .image {
