@@ -14,6 +14,7 @@ export const StoreProvider = ({ children }: Props) => {
     store.dispatch(hydrateCart(loadCartItems()));
 
     let previousItems = selectCartItems(store.getState());
+
     const unsubscribe = store.subscribe(() => {
       const items = selectCartItems(store.getState());
       if (items !== previousItems) {
