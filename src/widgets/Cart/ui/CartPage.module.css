@@ -47,6 +47,16 @@
   border: 1px solid #27272a;
   border-radius: 12px;
   background: #18181b;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+.item:hover {
+  transform: translateY(-2px);
+  border-color: #52525b;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.16);
 }
 
 .image {
@@ -107,9 +117,38 @@
   font-size: 13px;
 }
 
+.clearButton {
+  padding: 8px 12px;
+  border: 1px solid #3f3f46;
+  border-radius: 8px;
+  background: #18181b;
+  color: #fafafa;
+  font-size: 13px;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.clearButton:hover {
+  border-color: #71717a;
+  background: #27272a;
+}
+
+.clearButton:focus-visible {
+  outline: 2px solid #71717a;
+  outline-offset: 2px;
+}
+
 .textButton:hover,
 .quantity button:hover {
   color: #fff;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .item,
+  .clearButton {
+    transition: none;
+  }
 }
 
 .lineTotal {

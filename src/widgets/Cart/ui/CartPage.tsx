@@ -32,7 +32,7 @@ export const CartPage = () => {
     <main className={styles.container}>
       <div className={styles.heading}>
         <h1 className={styles.title}>Your cart</h1>
-        <button className={styles.textButton} onClick={() => dispatch(clearCart())}>Clear cart</button>
+        <button className={styles.clearButton} onClick={() => dispatch(clearCart())}>Clear cart</button>
       </div>
 
       <div className={styles.layout}>
